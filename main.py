@@ -1,4 +1,4 @@
-import os,ctypes,sys
+import ctypes,sys
 from PyQt5.QtWidgets import QApplication,QMainWindow
 
 from _ui.main_ui import *
