@@ -1,14 +1,15 @@
 import ctypes,sys
 from PyQt5.QtWidgets import QApplication,QMainWindow
 
+#ui
 from _ui.main_ui import *
 from _ui.ui_function import *
 
+#function
+from analysis import analysis
+
 myappid="PE_Psychology"
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-
-#Set path
-
 
 #Bound signal of main UI
 class main_ui(Ui_MainWindow):
