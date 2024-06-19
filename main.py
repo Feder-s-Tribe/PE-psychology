@@ -35,11 +35,13 @@ class main_ui(Ui_MainWindow):
         
         #Run function
         try:
-            pass
+            analysisResult=analysis(self.lineEdit_input.text())
+            analysisResult.analysis()#Run analysis function
+            analysisResult.generate(self.lineEdit_save.text())#generate forms of the results
             #function
         except:
             show_error_message(1,u"生成失败")
-        finally:
+        else:
             show_error_message(4,u"保存成功")
 
     #Initialize the UI function
