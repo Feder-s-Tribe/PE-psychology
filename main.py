@@ -34,15 +34,15 @@ class main_ui(Ui_MainWindow):
             return 0
         
         #Run function
-        try:
-            analysisResult=analysis(self.lineEdit_input.text())
-            analysisResult.analysis()#Run analysis function
-            analysisResult.generate(self.lineEdit_save.text())#generate forms of the results
+        # try:
+        analysisResult=analysis(self.lineEdit_input.text())
+        analysisResult.analysis()#Run analysis function
+            # analysisResult.generate(self.lineEdit_save.text())#generate forms of the results
             #function
-        except:
-            show_error_message(1,u"生成失败")
-        else:
-            show_error_message(4,u"保存成功")
+        # except:
+        #     show_error_message(1,u"生成失败")
+        # else:
+        #     show_error_message(4,u"保存成功")
 
     #Initialize the UI function
     def initUI(self):
