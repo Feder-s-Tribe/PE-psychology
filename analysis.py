@@ -23,7 +23,7 @@ class analysis:
         self.colNameInfo=["name","gender","schoolID","nation","org","dep","sport","date","coachName","duration","birthday"]
         self.colNameScore=["scoreBody","scoreForce","scoreRelation","scoreDep","scoreAnx","scoreHos","scoreHorr","scorePara","scoreSens","scoreOther"]
 
-        self.__total={
+        self.__total={#original NO+11
             "scoreBody":["12","15","23","38","51","76","79"],
             "scoreForce":["14","21","39","49","56","62","66"],
             "scoreRelation":["16","17","32","45","47","48","52","63","73"],
@@ -33,7 +33,7 @@ class analysis:
             "scoreHorr":["24","36","57","58","61","71"],
             "scorePara":["19","29","54","69"],
             "scoreSens":["18","78","80","81"],
-            "scoreOther":["27","30","46","55","59","60","68","72","74","75","77"]
+            "scoreOther":["27","30","46","55","59","60","67","72","74","75","77"]
         }
 
     def analysis(self):
