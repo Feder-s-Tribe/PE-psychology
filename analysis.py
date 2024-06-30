@@ -1,5 +1,7 @@
-import os
-from docxtpl import DocxTemplate
+import os,io,kaleido
+from docxtpl import DocxTemplate,InlineImage
+from docx.shared import Mm
+import plotly.graph_objects as go
 import pandas as pd
 
 class analysis:
@@ -55,27 +57,68 @@ class analysis:
 
                 #Sub item score
                 totalScore=0
+                condition=[str(x) for x in range(12,83)]
+                Positive=(dbData[condition]>1).sum(axis=1)
+                Nagative=(dbData[condition]==1).sum(axis=1)
                 for sub in list(self.__total.keys()):
                     scorelist=self.__total.get(sub)
                     subScore=dbData.loc[0,scorelist].sum()
                     totalScore+=subScore
                     self.__db.loc[dbLen,sub]=subScore
                 self.__db.loc[dbLen,"totalScore"]=totalScore
+                self.__db.loc[dbLen,"Positive"]=Positive[0]
+                self.__db.loc[dbLen,"Nagative"]=Nagative[0]
             else:
                 skip+=1
-                print(skip)
         self.__db.to_csv(r"sample\\db.csv",encoding="ANSI",index=False)
+
+        #Return the number of existed record
+        return skip
 
 
     def generate(self,savepath):
+        #Initialize the Word sample and reread db.csv
         word=DocxTemplate(r"sample\\SCL-90Scale.docx")
+        self.__db=pd.read_csv(r"sample\\db.csv",encoding="ANSI")
+        skip=0
+
         for i in range(0,self.len):
-            context=self.result.loc[i]
-            contexts=dict(zip(self.colName,context))
+            #Read basic information from db.csv and combine it with the sample dict
+            context=self.__db.loc[i,self.colNameInfo+["totalScore"]]
+            name=context[0]
+            fileName=name+str(context[7])+".docx"
+            path=os.path.join(savepath,name)
+            pathFile=os.path.join(path,fileName)
+
+            #Check whether the result exist
+            if os.path.exists(pathFile):
+                skip+=1
+                continue
+
+            contexts=dict(zip(self.colNameInfo+["totalScore"],context))
+
+            #Draw the histogram image
+            traceBasic=[go.Bar(
+                x=[u"躯体化",u"强迫症状",u"人际关系敏感",u"抑郁",u"焦虑",u"敌对",u"恐怖",u"偏执",u"精神病性",u"其他项目",u"总症状指数"],
+                y=self.__db.loc[i,self.colNameScore+["totalScore"]]
+            )]
+            figureBasic=go.Figure(data=traceBasic)
+            # figureBasic.show()
+            imageIO=io.BytesIO()
+            figureBasic.write_image(imageIO,format="jpeg",engine="kaleido")#引擎好像有问题
+            contexts["histogramResult"]=InlineImage(word,imageIO,width=Mm(40),height=Mm(40))
+
             word.render(contexts)
-            word.save(os.path.join(savepath,context[0]+str(context[9])+".docx"))
+
+            #Save Word
+            if not os.path.isdir(path):
+                os.mkdir(path)
+            word.save(pathFile)
+
+        print(skip)
 
 #test
 if __name__ == '__main__':
     analysisResult=analysis(r"C:\\Users\\tengd\\Desktop\\272381692_按序号_运动员心理症状自评量表_25_25.xlsx")
-    analysisResult.analysis()
+    # analysisResult.analysis()
+    analysisResult.generate(r"C:\\Users\\tengd\\Desktop\\test")
