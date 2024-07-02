@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>125</height>
+    <height>162</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>运动员心理症状自评量表生成工具</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -72,6 +72,30 @@
         </property>
         <property name="text">
          <string>浏览</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QCheckBox" name="checkBox_input">
+        <property name="text">
+         <string>录入数据表</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_output">
+        <property name="text">
+         <string>导出数据成果</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

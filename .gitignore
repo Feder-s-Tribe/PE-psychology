@@ -2,3 +2,6 @@ __pycache__/
 ~$*.docx
 *.tmp
 test.py
+dist/
+build/
+/dist.zip

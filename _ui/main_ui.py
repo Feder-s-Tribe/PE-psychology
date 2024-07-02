@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(640, 125)
+        MainWindow.resize(640, 162)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -47,6 +47,17 @@ class Ui_MainWindow(object):
         self.pushButton_save.setObjectName("pushButton_save")
         self.horizontalLayout_2.addWidget(self.pushButton_save)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.checkBox_input = QtWidgets.QCheckBox(self.centralwidget)
+        self.checkBox_input.setChecked(True)
+        self.checkBox_input.setObjectName("checkBox_input")
+        self.horizontalLayout_4.addWidget(self.checkBox_input)
+        self.checkBox_output = QtWidgets.QCheckBox(self.centralwidget)
+        self.checkBox_output.setChecked(True)
+        self.checkBox_output.setObjectName("checkBox_output")
+        self.horizontalLayout_4.addWidget(self.checkBox_output)
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
@@ -69,9 +80,11 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "运动员心理症状自评量表生成工具"))
         self.label.setText(_translate("MainWindow", "原始表："))
         self.pushButton_input.setText(_translate("MainWindow", "浏览"))
         self.label_2.setText(_translate("MainWindow", "保存路径"))
         self.pushButton_save.setText(_translate("MainWindow", "浏览"))
+        self.checkBox_input.setText(_translate("MainWindow", "录入数据表"))
+        self.checkBox_output.setText(_translate("MainWindow", "导出数据成果"))
         self.pushButton.setText(_translate("MainWindow", "开始生成"))

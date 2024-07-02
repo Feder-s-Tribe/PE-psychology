@@ -26,23 +26,31 @@ class main_ui(Ui_MainWindow):
     #Save result
     def save_result(self):
         #Check the input
-        if self.lineEdit_input.text()=="":
+        if self.lineEdit_input.text()=="" and self.checkBox_input.isChecked():
             show_error_message(1,u"请选择文件")
             return 0
-        if self.lineEdit_save.text()=="":
+        elif self.lineEdit_save.text()=="" and self.checkBox_output.isChecked():
             show_error_message(1,u"请选择保存路径")
+            return 0
+        elif not (self.checkBox_input.isChecked() or self.checkBox_output.isChecked()):
+            show_error_message(1,u"请勾选工作内容")
             return 0
         
         #Run function
+        result="其中：\n"
         try:
             analysisResult=analysis(self.lineEdit_input.text())
-            analysisResult.analysis()#Run analysis function
-            analysisResult.generate(self.lineEdit_save.text())#generate forms of the results
-            function
-        except:
+            if self.checkBox_input.isChecked():
+                skipAnaly=analysisResult.analysis()#Run analysis function
+                result+=(str(skipAnaly)+u"条重复数据已跳过录入\n")
+            if self.checkBox_output.isChecked():
+                skipResult=analysisResult.generate(self.lineEdit_save.text())#generate forms of the results
+                result+=(str(skipResult)+u"条重复结果已跳过生成\n")
+        except Exception as e:
             show_error_message(1,u"生成失败")
+            print(e)
         else:
-            show_error_message(4,u"保存成功")
+            show_error_message(4,u"保存成功",result)
 
     #Initialize the UI function
     def initUI(self):

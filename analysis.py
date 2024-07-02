@@ -2,6 +2,7 @@ import os,io
 from docxtpl import DocxTemplate,InlineImage
 from docx.shared import Mm
 from decimal import Decimal,ROUND_HALF_UP
+from constant import *
 # import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -20,10 +21,7 @@ class analysis:
             self.__newColums[i]=self.__newColums[i][0:self.__newColums[i].index(u"、")]
         self.__data.columns=self.__newColums
         self.__gender={1:"男",2:"女"}
-        self.__nation={
-            1:"汉族",
-            8:"彝族",
-        }
+        self.__nation=NATION
         self.__data["2"]=self.__data["2"].replace(self.__gender,regex=True)
         self.__data["4"]=self.__data["4"].replace(self.__nation,regex=True)
 
@@ -34,32 +32,22 @@ class analysis:
         self.colNamePos=[x+"Pos" for x in self.colNameScore]
         self.colNameNeg=[x+"Neg" for x in self.colNameScore]
         
-        self.__total={#original NO+11
-            "scoreBody":["12","15","23","38","51","76","79"],
-            "scoreForce":["14","21","39","49","56","62","66"],
-            "scoreRelation":["16","17","32","45","47","48","52","63","73"],
-            "scoreDep":["20","22","25","26","31","33","37","40","41","42","43","53","64","65"],
-            "scoreAnx":["13","28","34","44","50","68"],
-            "scoreHos":["35","70","82"],
-            "scoreHorr":["24","36","57","58","61","71"],
-            "scorePara":["19","29","54","69"],
-            "scoreSens":["18","78","80","81"],
-            "scoreOther":["27","30","46","55","59","60","67","72","74","75","77"]
-        }
+        self.__total=QUESTION_NO
 
     def analysis(self):
         skip=0
         #Retrieve whether the name and date are in the database
         for row in self.__data.itertuples():
             name=row[1]
-            date=row[8]       
+            date=row[8]
             #if not, add data and calculate the result
             if self.__db.loc[(self.__db["name"]==name) & (self.__db["date"]==date)].empty:
                 #Person infomation
                 result=row[1:12]
-                result+=tuple([0]*33) #total len of db list-11
+                result+=tuple([0]*34) #total len of db list-11
                 dbLen=len(self.__db.index)
                 self.__db.loc[dbLen]=result
+                conclusion=[0]
 
                 #Change to dataframe
                 dbData=pd.DataFrame([dict(zip(self.__newColums,row[1:]))])
@@ -69,6 +57,10 @@ class analysis:
                 for sub in list(self.__total.keys()):
                     scorelist=self.__total.get(sub)
                     subScore=dbData.loc[0,scorelist].sum()
+                    subAverage=rightRound(subScore/len(scorelist),2)
+                    if subAverage>2:
+                        conclusion[0]+=1
+                        conclusion.append(QUESTION_NEED_INVASION.get(sub))
                     subPos=(dbData[scorelist]>1).sum(axis=1)[0]
                     subNeg=(dbData[scorelist]==1).sum(axis=1)[0]
                     totalScore+=subScore
@@ -77,9 +69,25 @@ class analysis:
                     self.__db.loc[dbLen,sub]=subScore
                     self.__db.loc[dbLen,sub+"Pos"]=subPos
                     self.__db.loc[dbLen,sub+"Neg"]=subNeg
+                if totalScore>132:
+                    conclusion[0]+=1
+                    conclusion.append(u"总分超过132分")
                 self.__db.loc[dbLen,"totalScore"]=totalScore
                 self.__db.loc[dbLen,"Positive"]=Positive
                 self.__db.loc[dbLen,"Negative"]=Negative
+                if conclusion[0]:
+                    result=u"需要干预，原因如下：\n"
+                    for i in range(1,conclusion[0]+1):
+                        result+=str(i)
+                        result+="."
+                        result+=conclusion[i]
+                        if i==conclusion[0]:
+                            result+=u"。"
+                        else:
+                            result+=u"；\n"
+                    self.__db.loc[dbLen,"conclusion"]=result
+                else:
+                    self.__db.loc[dbLen,"conclusion"]=u"总分小于132分，且无任意因子超过2分，故无需干预。"
             else:
                 skip+=1
         self.__db.to_csv(r"sample\\db.csv",encoding="ANSI",index=False)
@@ -93,7 +101,7 @@ class analysis:
         word=DocxTemplate(r"sample\\SCL-90Scale.docx")
         self.__db=pd.read_csv(r"sample\\db.csv",encoding="ANSI")
         skip=0
-        colName=self.colNameInfo+self.colNamePos+self.colNameNeg+["totalScore","Positive","Negative"]
+        colName=self.colNameInfo+self.colNamePos+self.colNameNeg+["totalScore","Positive","Negative","conclusion"]
 
         #plt
         #Chinese label configation
