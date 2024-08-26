@@ -112,7 +112,7 @@ class analysis:
         nameList=[u"躯体",u"强迫",u"人际",u"抑郁",u"焦虑",u"敌对",u"恐怖",u"偏执",u"精敏",u"认知",u"总均"]
         index=[x for x in range(len(nameList))]
 
-        for i in range(0,self.len):
+        for i in range(0,len(self.__db)):
             #Read basic information from db.csv and combine it with the sample dict
             context=self.__db.loc[i,colName]
             name=context[0]
